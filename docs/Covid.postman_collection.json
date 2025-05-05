@@ -176,7 +176,7 @@
 					]
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/upload/?filter=canny",
+					"raw": "http://localhost:8000/api/process_image/?filter=canny&original_id=9",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -184,20 +184,24 @@
 					"port": "8000",
 					"path": [
 						"api",
-						"upload",
+						"process_image",
 						""
 					],
 					"query": [
 						{
 							"key": "filter",
 							"value": "canny"
+						},
+						{
+							"key": "original_id",
+							"value": "9"
 						}
 					]
 				}
 			},
 			"response": [
 				{
-					"name": "Apply filter",
+					"name": "New image",
 					"originalRequest": {
 						"method": "POST",
 						"header": [],
@@ -212,7 +216,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:8000/api/upload/?filter=canny",
+							"raw": "http://localhost:8000/api/process_image/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -220,13 +224,19 @@
 							"port": "8000",
 							"path": [
 								"api",
-								"upload",
+								"process_image",
 								""
 							],
 							"query": [
 								{
 									"key": "filter",
-									"value": "canny"
+									"value": "canny",
+									"disabled": true
+								},
+								{
+									"key": "original_id",
+									"value": "2",
+									"disabled": true
 								}
 							]
 						}
@@ -237,7 +247,7 @@
 					"header": [
 						{
 							"key": "Date",
-							"value": "Mon, 05 May 2025 05:08:33 GMT"
+							"value": "Mon, 05 May 2025 08:51:03 GMT"
 						},
 						{
 							"key": "Server",
@@ -248,16 +258,83 @@
 							"value": "application/json"
 						},
 						{
+							"key": "Vary",
+							"value": "origin"
+						},
+						{
 							"key": "Connection",
 							"value": "close"
 						}
 					],
-					"cookie": [
+					"cookie": [],
+					"body": "{\n    \"id\": 9,\n    \"filter\": \"raw\",\n    \"raw_url\": \"http://localhost:8000/media/user_generated/9_original.jpg\",\n    \"processed_url\": \"\"\n}"
+				},
+				{
+					"name": "Apply filter to new image",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/marco/Desktop/test.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/process_image/?filter=canny&original_id=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"process_image",
+								""
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "canny"
+								},
+								{
+									"key": "original_id",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
 						{
-							"expires": "Invalid Date"
+							"key": "Date",
+							"value": "Mon, 05 May 2025 08:51:40 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.10.11"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "origin"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
 						}
 					],
-					"body": "{\n    \"id\": 3,\n    \"filter\": \"canny\",\n    \"raw_url\": \"http://localhost:8000/media/user_generated/1_original.jpg\",\n    \"processed_url\": \"http://localhost:8000/media/user_generated/1_canny.jpg\"\n}"
+					"cookie": [],
+					"body": "{\n    \"id\": 9,\n    \"filter\": \"canny\",\n    \"raw_url\": \"http://localhost:8000/media/user_generated/9_original.jpg\",\n    \"processed_url\": \"http://localhost:8000/media/user_generated/9_canny.jpg\"\n}"
 				}
 			]
 		},

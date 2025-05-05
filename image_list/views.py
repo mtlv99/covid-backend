@@ -68,67 +68,86 @@ def image_list(request):
         'results': list(page)
     })
 
-
-@csrf_exempt
 @csrf_exempt
 def upload_and_filter_image(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Only POST method allowed'}, status=405)
 
-    img_file = request.FILES.get('image')
     filter_type = request.GET.get('filter', 'raw')
-
-    if not img_file:
-        return JsonResponse({'error': 'No image file provided'}, status=400)
+    original_id = request.GET.get('original_id')
+    img_file = request.FILES.get('image')
 
     user_dir = Path(settings.MEDIA_ROOT) / 'user_generated'
     user_dir.mkdir(parents=True, exist_ok=True)
 
-    # Determine next ID
-    existing = sorted(user_dir.glob('*_original.*'))
-    if existing:
-        last_id = int(existing[-1].name.split('_')[0])
-        next_id = last_id + 1
+    # Reutilizar imagen ya subida
+    if original_id:
+        try:
+            original_id = int(original_id)
+            original_filename = f"{original_id}_original.jpg"
+            original_path = user_dir / original_filename
+            if not original_path.exists():
+                return JsonResponse({'error': 'Original image not found'}, status=404)
+
+            img = cv2.imread(str(original_path))
+            if img is None:
+                return JsonResponse({'error': 'Failed to read original image'}, status=400)
+
+            next_id = original_id
+
+        except ValueError:
+            return JsonResponse({'error': 'Invalid original_id'}, status=400)
+
+    # Nueva imagen subida
+    elif img_file:
+        existing = user_dir.glob('*_original.*')
+        ids = [int(f.name.split('_')[0]) for f in existing if f.name.split('_')[0].isdigit()]
+        next_id = max(ids) + 1 if ids else 1
+
+        original_filename = f"{next_id}_original.jpg"
+        original_path = user_dir / original_filename
+
+        with open(original_path, 'wb') as f:
+            for chunk in img_file.chunks():
+                f.write(chunk)
+
+        img = cv2.imread(str(original_path))
+        if img is None:
+            return JsonResponse({'error': 'Invalid image format'}, status=400)
+
     else:
-        next_id = 1
+        return JsonResponse({'error': 'Provide either image or original_id'}, status=400)
 
-    # Save original file
-    original_filename = f"{next_id}_original.jpg"
-    original_path = user_dir / original_filename
-    with open(original_path, 'wb') as f:
-        for chunk in img_file.chunks():
-            f.write(chunk)
-
-    img = cv2.imread(str(original_path))
-    if img is None:
-        return JsonResponse({'error': 'Invalid image format'}, status=400)
-
-    # Apply filter
+    # Aplicar el filtro
     if filter_type == 'bilateral':
         img_filtered = cv2.bilateralFilter(img, 9, 75, 75)
+        filtered_filename = f"{next_id}_bilateral.jpg"
     elif filter_type == 'canny':
         img_filtered = cv2.Canny(img, 100, 200)
         img_filtered = cv2.cvtColor(img_filtered, cv2.COLOR_GRAY2BGR)
-    else:  # raw
+        filtered_filename = f"{next_id}_canny.jpg"
+    else:
         img_filtered = img
+        filtered_filename = None
 
-    # Save filtered image only if needed
-    if filter_type != 'raw':
-        filtered_filename = f"{next_id}_{filter_type}.jpg"
+    if filtered_filename:
         filtered_path = user_dir / filtered_filename
         cv2.imwrite(str(filtered_path), img_filtered)
-    else:
-        filtered_filename = original_filename
 
-    original_url = request.build_absolute_uri(settings.MEDIA_URL + f"user_generated/{original_filename}")
-    filtered_url = request.build_absolute_uri(settings.MEDIA_URL + f"user_generated/{filtered_filename}")
+    # Construir URLs
+    raw_url = request.build_absolute_uri(settings.MEDIA_URL + f"user_generated/{next_id}_original.jpg")
+    processed_url = (
+        request.build_absolute_uri(settings.MEDIA_URL + f"user_generated/{filtered_filename}")
+        if filtered_filename else ""
+    )
 
     return JsonResponse({
         'id': next_id,
         'filter': filter_type,
-        'raw_url': original_url,
-        'processed_url': filtered_url
+        'raw_url': raw_url,
+        'processed_url': processed_url
     })
+
 
 @csrf_exempt
 def predict_image(request):
