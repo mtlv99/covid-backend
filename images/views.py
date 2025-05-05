@@ -44,33 +44,54 @@ def image_list(request):
 @csrf_exempt
 def upload_and_filter_image(request):
     if request.method != 'POST':
-        return JsonResponse({'error': 'Only POST allowed'}, status=405)
+        return JsonResponse({'error': 'Only POST method allowed'}, status=405)
 
-    uploaded_file: InMemoryUploadedFile = request.FILES.get('image')
-    if not uploaded_file:
-        return JsonResponse({'error': 'No image uploaded'}, status=400)
-
+    img_file = request.FILES.get('image')
     filter_type = request.GET.get('filter', 'raw')
 
-    # Convert uploaded image to OpenCV format
-    np_arr = np.frombuffer(uploaded_file.read(), np.uint8)
-    img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+    if not img_file:
+        return JsonResponse({'error': 'No image file provided'}, status=400)
 
-    # Apply selected filter
+    # Directory where images will be stored
+    user_dir = Path(settings.MEDIA_ROOT) / 'user_generated'
+    user_dir.mkdir(parents=True, exist_ok=True)
+
+    # Determine next ID
+    existing = sorted(user_dir.glob('*_original.*'))
+    if existing:
+        last_id = int(existing[-1].name.split('_')[0])
+        next_id = last_id + 1
+    else:
+        next_id = 1
+
+    # Save original file
+    original_path = user_dir / f"{next_id}_original.jpg"
+    with open(original_path, 'wb') as f:
+        for chunk in img_file.chunks():
+            f.write(chunk)
+
+    # Load using OpenCV
+    img = cv2.imread(str(original_path))
+    if img is None:
+        return JsonResponse({'error': 'Invalid image format'}, status=400)
+
     if filter_type == 'bilateral':
-        filtered = cv2.bilateralFilter(img, d=9, sigmaColor=75, sigmaSpace=75)
+        img_filtered = cv2.bilateralFilter(img, 9, 75, 75)
     elif filter_type == 'canny':
-        filtered = cv2.Canny(img, threshold1=100, threshold2=200)
-    else:  # raw or unknown
-        filtered = img
+        img_filtered = cv2.Canny(img, 100, 200)
+        img_filtered = cv2.cvtColor(img_filtered, cv2.COLOR_GRAY2BGR)
+    else:  # raw
+        img_filtered = img
+        # No need to duplicate image if no filtering
+        filtered_path = original_path
+    if filter_type != 'raw':
+        filtered_path = user_dir / f"{next_id}_{filter_type}.jpg"
+        cv2.imwrite(str(filtered_path), img_filtered)
 
-    # Encode image to base64
-    is_color = len(filtered.shape) == 3
-    _, buffer = cv2.imencode('.jpg', filtered if is_color else cv2.cvtColor(filtered, cv2.COLOR_GRAY2BGR))
-    b64_encoded = base64.b64encode(buffer).decode('utf-8')
+    media_url = request.build_absolute_uri(settings.MEDIA_URL + f"user_generated/{filtered_path.name}")
 
     return JsonResponse({
-        'filename': uploaded_file.name,
+        'id': next_id,
         'filter': filter_type,
-        'image_base64': b64_encoded
+        'url': media_url
     })
