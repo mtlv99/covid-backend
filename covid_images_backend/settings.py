@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 INSTALLED_APPS = [
     'corsheaders',
     'django.contrib.staticfiles',
-    'images',
+    'image_list',
 ]
 
 MIDDLEWARE = ['corsheaders.middleware.CorsMiddleware']
