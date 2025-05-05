@@ -43,6 +43,7 @@ def image_list(request):
 
 
 @csrf_exempt
+@csrf_exempt
 def upload_and_filter_image(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Only POST method allowed'}, status=405)
@@ -53,7 +54,6 @@ def upload_and_filter_image(request):
     if not img_file:
         return JsonResponse({'error': 'No image file provided'}, status=400)
 
-    # Directory where images will be stored
     user_dir = Path(settings.MEDIA_ROOT) / 'user_generated'
     user_dir.mkdir(parents=True, exist_ok=True)
 
@@ -66,16 +66,17 @@ def upload_and_filter_image(request):
         next_id = 1
 
     # Save original file
-    original_path = user_dir / f"{next_id}_original.jpg"
+    original_filename = f"{next_id}_original.jpg"
+    original_path = user_dir / original_filename
     with open(original_path, 'wb') as f:
         for chunk in img_file.chunks():
             f.write(chunk)
 
-    # Load using OpenCV
     img = cv2.imread(str(original_path))
     if img is None:
         return JsonResponse({'error': 'Invalid image format'}, status=400)
 
+    # Apply filter
     if filter_type == 'bilateral':
         img_filtered = cv2.bilateralFilter(img, 9, 75, 75)
     elif filter_type == 'canny':
@@ -83,18 +84,23 @@ def upload_and_filter_image(request):
         img_filtered = cv2.cvtColor(img_filtered, cv2.COLOR_GRAY2BGR)
     else:  # raw
         img_filtered = img
-        # No need to duplicate image if no filtering
-        filtered_path = original_path
-    if filter_type != 'raw':
-        filtered_path = user_dir / f"{next_id}_{filter_type}.jpg"
-        cv2.imwrite(str(filtered_path), img_filtered)
 
-    media_url = request.build_absolute_uri(settings.MEDIA_URL + f"user_generated/{filtered_path.name}")
+    # Save filtered image only if needed
+    if filter_type != 'raw':
+        filtered_filename = f"{next_id}_{filter_type}.jpg"
+        filtered_path = user_dir / filtered_filename
+        cv2.imwrite(str(filtered_path), img_filtered)
+    else:
+        filtered_filename = original_filename
+
+    original_url = request.build_absolute_uri(settings.MEDIA_URL + f"user_generated/{original_filename}")
+    filtered_url = request.build_absolute_uri(settings.MEDIA_URL + f"user_generated/{filtered_filename}")
 
     return JsonResponse({
         'id': next_id,
         'filter': filter_type,
-        'url': media_url
+        'raw_url': original_url,
+        'processed_url': filtered_url
     })
 
 @csrf_exempt
