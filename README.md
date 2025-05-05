@@ -53,32 +53,20 @@ deactivate  # On Windows use: .\venv\Scripts\deactivate
 
 ## Test Examples
 
-### a. User with diabetes
+### a. Healthy Patient
 
 ```json
-{
-    "pregnancies": 3,
-    "glucose": 180.0,
-    "blood_pressure": 90.0,
-    "skin_thickness": 40.0,
-    "insulin": 200.0,
-    "bmi": 35.2,
-    "diabetes_pedigree_function": 0.9,
-    "age": 55
-}
+// TODO
 ```
 
-### b. User without diabetes
+### b. Patient with Covid
 
 ```json
-{
-    "pregnancies": 1,
-    "glucose": 95.0,
-    "blood_pressure": 75.0,
-    "skin_thickness": 20.0,
-    "insulin": 80.0,
-    "bmi": 22.5,
-    "diabetes_pedigree_function": 0.3,
-    "age": 30
-}
+// TODO
+```
+
+### c. Patient with Pneumonia
+
+```json
+// TODO
 ```
