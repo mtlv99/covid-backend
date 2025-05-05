@@ -1,0 +1,348 @@
+{
+	"info": {
+		"_postman_id": "e3237e61-10f3-45b2-81c1-9f4368070e2c",
+		"name": "Covid",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3930284"
+	},
+	"item": [
+		{
+			"name": "Load image list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/images/?page=1&page_size=5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"images",
+						""
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "page_size",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "New Request",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/images/?page=1&page_size=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"images",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "page_size",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Mon, 05 May 2025 02:10:04 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.10.11"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"count\": 317,\n    \"num_pages\": 64,\n    \"results\": [\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/01.jpeg\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"filename\": \"01.jpeg\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/010.png\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"filename\": \"010.png\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/012.jpeg\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"filename\": \"012.jpeg\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/015.jpg\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"filename\": \"015.jpg\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/019.png\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"filename\": \"019.png\"\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Apply filter",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/C:/Users/marco/Desktop/test.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/upload/?filter=canny",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"upload",
+						""
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "canny"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Apply filter",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/marco/Desktop/test.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/upload/?filter=canny",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"upload",
+								""
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "canny"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Mon, 05 May 2025 02:50:33 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.10.11"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": 1,\n    \"filter\": \"canny\",\n    \"url\": \"http://localhost:8000/media/user_generated/1_canny.jpg\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Predict",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"path\": \"/media/user_generated/1_original.jpg\",\n    \"filter\": \"bilateral\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/predict/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"predict",
+						""
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"path\": \"/media/train/Covid/02.jpeg\",\n    \"filter\": \"bilateral\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/predict/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"predict",
+								""
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Mon, 05 May 2025 03:17:47 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.10.11"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"prediction\": \"normal\",\n    \"confidence\": 0.75\n}"
+				},
+				{
+					"name": "Covid",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"path\": \"/media/user_generated/1_original.jpg\",\n    \"filter\": \"bilateral\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/predict/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"predict",
+								""
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Mon, 05 May 2025 03:20:05 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.10.11"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"prediction\": \"covid\",\n    \"confidence\": 0.84\n}"
+				}
+			]
+		}
+	]
+}

@@ -1,12 +1,13 @@
 import cv2
 import numpy as np
-import base64
+import json
 from pathlib import Path
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from .predictions import predict_image_with_model
 
 def image_list(request):
     dataset_dir = settings.MEDIA_ROOT
@@ -94,4 +95,33 @@ def upload_and_filter_image(request):
         'id': next_id,
         'filter': filter_type,
         'url': media_url
+    })
+
+@csrf_exempt
+def predict_image(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only POST method allowed'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        img_path = data.get('path')
+        filter_type = data.get('filter')
+    except Exception:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    if not img_path or not filter_type:
+        return JsonResponse({'error': 'Missing path or filter'}, status=400)
+
+    abs_path = Path(settings.MEDIA_ROOT) / Path(img_path).relative_to('/media/')
+    if not abs_path.exists():
+        return JsonResponse({'error': 'Image not found'}, status=404)
+
+    try:
+        pred_class, confidence = predict_image_with_model(abs_path, filter_type)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({
+        'prediction': pred_class,
+        'confidence': confidence
     })
