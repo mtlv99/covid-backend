@@ -74,31 +74,52 @@ def upload_and_filter_image(request):
         return JsonResponse({'error': 'Only POST method allowed'}, status=405)
 
     filter_type = request.GET.get('filter', 'raw')
-    original_id = request.GET.get('original_id')
+    source_path_param = request.GET.get('source_path')
     img_file = request.FILES.get('image')
 
     user_dir = Path(settings.MEDIA_ROOT) / 'user_generated'
     user_dir.mkdir(parents=True, exist_ok=True)
 
-    # Reutilizar imagen ya subida
-    if original_id:
+    final_source_path = ""
+    raw_url = ""
+    filtered_filename = None
+
+    if source_path_param:
         try:
-            original_id = int(original_id)
-            original_filename = f"{original_id}_original.jpg"
-            original_path = user_dir / original_filename
-            if not original_path.exists():
-                return JsonResponse({'error': 'Original image not found'}, status=404)
+            relative_path = Path(source_path_param).relative_to('/media/')
+            source_abs_path = Path(settings.MEDIA_ROOT) / relative_path
+        except Exception:
+            return JsonResponse({'error': 'Invalid source_path'}, status=400)
 
-            img = cv2.imread(str(original_path))
-            if img is None:
-                return JsonResponse({'error': 'Failed to read original image'}, status=400)
+        if not source_abs_path.exists():
+            return JsonResponse({'error': 'Image not found at source_path'}, status=404)
 
-            next_id = original_id
+        img = cv2.imread(str(source_abs_path))
+        if img is None:
+            return JsonResponse({'error': 'Failed to read image at source_path'}, status=400)
 
-        except ValueError:
-            return JsonResponse({'error': 'Invalid original_id'}, status=400)
+        final_source_path = str(relative_path).replace("\\", "/")
+        raw_url = request.build_absolute_uri(settings.MEDIA_URL + final_source_path)
 
-    # Nueva imagen subida
+        # Imagen viene de user_generated → mantener ID
+        if 'user_generated' in final_source_path:
+            try:
+                image_id = int(Path(source_path_param).name.split('_')[0])
+                filtered_filename = f"{image_id}_{filter_type}.jpg"
+            except Exception:
+                return JsonResponse({'error': 'Could not determine ID from source_path'}, status=400)
+
+        # Imagen de dataset → generar nombre informativo
+        else:
+            try:
+                split = relative_path.parts[0]       # train / test
+                class_name = relative_path.parts[1]  # Covid / Normal / etc.
+                original_name = Path(relative_path.name).stem  # e.g., '01'
+            except Exception:
+                return JsonResponse({'error': 'Invalid dataset path format'}, status=400)
+
+            filtered_filename = f"{split}_{class_name.lower()}_{original_name}_{filter_type}.jpg"
+
     elif img_file:
         existing = user_dir.glob('*_original.*')
         ids = [int(f.name.split('_')[0]) for f in existing if f.name.split('_')[0].isdigit()]
@@ -115,34 +136,33 @@ def upload_and_filter_image(request):
         if img is None:
             return JsonResponse({'error': 'Invalid image format'}, status=400)
 
-    else:
-        return JsonResponse({'error': 'Provide either image or original_id'}, status=400)
+        final_source_path = f"user_generated/{original_filename}"
+        raw_url = request.build_absolute_uri(settings.MEDIA_URL + final_source_path)
+        filtered_filename = f"{next_id}_{filter_type}.jpg"
 
-    # Aplicar el filtro
+    else:
+        return JsonResponse({'error': 'Provide either image or source_path'}, status=400)
+
+    # Aplicar filtro
     if filter_type == 'bilateral':
         img_filtered = cv2.bilateralFilter(img, 9, 75, 75)
-        filtered_filename = f"{next_id}_bilateral.jpg"
     elif filter_type == 'canny':
         img_filtered = cv2.Canny(img, 100, 200)
         img_filtered = cv2.cvtColor(img_filtered, cv2.COLOR_GRAY2BGR)
-        filtered_filename = f"{next_id}_canny.jpg"
     else:
         img_filtered = img
         filtered_filename = None
 
+    # Guardar imagen procesada si no es raw
     if filtered_filename:
         filtered_path = user_dir / filtered_filename
         cv2.imwrite(str(filtered_path), img_filtered)
-
-    # Construir URLs
-    raw_url = request.build_absolute_uri(settings.MEDIA_URL + f"user_generated/{next_id}_original.jpg")
-    processed_url = (
-        request.build_absolute_uri(settings.MEDIA_URL + f"user_generated/{filtered_filename}")
-        if filtered_filename else ""
-    )
+        processed_url = request.build_absolute_uri(settings.MEDIA_URL + f"user_generated/{filtered_filename}")
+    else:
+        processed_url = ""
 
     return JsonResponse({
-        'id': next_id,
+        'source_path': f"/media/{final_source_path}",
         'filter': filter_type,
         'raw_url': raw_url,
         'processed_url': processed_url
