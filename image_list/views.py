@@ -176,17 +176,22 @@ def predict_image(request):
 
     try:
         data = json.loads(request.body)
-        img_path = data.get('path')
+        source_path = data.get('source_path')
         filter_type = data.get('filter')
     except Exception:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
-    if not img_path or not filter_type:
-        return JsonResponse({'error': 'Missing path or filter'}, status=400)
+    if not source_path or not filter_type:
+        return JsonResponse({'error': 'Missing source_path or filter'}, status=400)
 
-    abs_path = Path(settings.MEDIA_ROOT) / Path(img_path).relative_to('/media/')
+    try:
+        relative_path = Path(source_path).relative_to('/media/')
+        abs_path = Path(settings.MEDIA_ROOT) / relative_path
+    except Exception:
+        return JsonResponse({'error': 'Invalid source_path format'}, status=400)
+
     if not abs_path.exists():
-        return JsonResponse({'error': 'Image not found'}, status=404)
+        return JsonResponse({'error': 'Image not found at source_path'}, status=404)
 
     try:
         pred_class, confidence = predict_image_with_model(abs_path, filter_type)

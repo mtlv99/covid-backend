@@ -9,10 +9,8 @@ Authors:
 # Technologies used
 - **Language**: Python 3.10
 - **Web Framework**: Django
-- **Data Analysis**: pandas
-- **Machine Learning**: scikit-learn (sklearn)
-- **Data Visualization**: seaborn, matplotlib
-- **Database**: MariaDB
+- **Machine Learning**: pytorch
+- **Data Visualization**: seaborn, matplotlib, weights & biases
 
 ## Installation
 
@@ -50,23 +48,6 @@ python manage.py runserver
 deactivate  # On Windows use: .\venv\Scripts\deactivate
 ```
 
-
 ## Test Examples
 
-### a. Healthy Patient
-
-```json
-// TODO
-```
-
-### b. Patient with Covid
-
-```json
-// TODO
-```
-
-### c. Patient with Pneumonia
-
-```json
-// TODO
-```
+For test examples, you can check the postman collection, it has some examples of how to use the API.

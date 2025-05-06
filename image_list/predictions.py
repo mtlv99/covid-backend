@@ -1,38 +1,72 @@
-from pathlib import Path
-import cv2
-import random
+import os
+import torch
+import torch.nn as nn
+from torchvision import models, transforms
+from PIL import Image
+from django.conf import settings
 
-def load_model_for_filter(filter_type):
-    # Placeholder for model loading logic
-    if filter_type == 'raw':
-        model = "raw_model"  # replace with actual model loading
-    elif filter_type == 'bilateral':
-        model = "bilateral_model"
-    elif filter_type == 'canny':
-        model = "canny_model"
-    else:
-        raise ValueError("Unknown filter type")
+# Dispositivo de ejecución (GPU si está disponible)
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# Ruta absoluta a training/models
+MODEL_DIR = os.path.join(settings.BASE_DIR, "training", "models")
+
+# Mapeo de filtros a rutas de modelos VGG16
+MODEL_PATHS = {
+    "raw": os.path.join(MODEL_DIR, "vgg16_conjunto_raw.pth"),
+    "bilateral": os.path.join(MODEL_DIR, "vgg16_conjunto_bilateral.pth"),
+    "canny": os.path.join(MODEL_DIR, "vgg16_conjunto_canny.pth"),
+}
+
+# Etiquetas del modelo
+CLASS_NAMES = ['covid', 'normal', 'pneumonia']
+
+# Caché de modelos cargados
+_loaded_models = {}
+
+def load_model(filter_type):
+    if filter_type not in MODEL_PATHS:
+        raise ValueError(f"Unsupported filter type: {filter_type}")
+
+    if filter_type in _loaded_models:
+        return _loaded_models[filter_type]
+
+    model_path = MODEL_PATHS[filter_type]
+    if not os.path.isfile(model_path):
+        raise FileNotFoundError(f"Model file not found at: {model_path}")
+
+    # Cargar arquitectura VGG16 y adaptar la capa final
+    model = models.vgg16(pretrained=False)
+    model.classifier[6] = nn.Linear(model.classifier[6].in_features, len(CLASS_NAMES))
+
+    model.load_state_dict(torch.load(model_path, map_location=DEVICE))
+    model.to(DEVICE)
+    model.eval()
+
+    _loaded_models[filter_type] = model
     return model
 
 def predict_image_with_model(image_path, filter_type):
-    model = load_model_for_filter(filter_type)
+    model = load_model(filter_type)
 
-    # Placeholder: load image
-    image = cv2.imread(str(image_path))
-    if image is None:
-        raise ValueError("Image could not be loaded.")
+    transform = transforms.Compose([
+        transforms.Resize((224, 224)),  # Tamaño estándar para VGG16
+        transforms.ToTensor(),
+        transforms.Normalize(
+            mean=[0.485, 0.456, 0.406],  # Imagen RGB normalizada (estándar ImageNet)
+            std=[0.229, 0.224, 0.225]
+        ),
+    ])
 
-    # Preprocess the image as your model requires (e.g., resize, normalize)
-    # For example:
-    # image = cv2.resize(image, (224, 224))
-    # image = image / 255.0
-    # prediction = model.predict(image.reshape(1, 224, 224, 3))
-    # pred_class = np.argmax(prediction)
-    # confidence = np.max(prediction)
+    # Cargar y preprocesar imagen
+    image = Image.open(image_path).convert("RGB")
+    input_tensor = transform(image).unsqueeze(0).to(DEVICE)
 
-    # For now, simulate prediction
-    possible_classes = ['covid', 'normal', 'pneumonia']
-    pred_class = random.choice(possible_classes)
-    confidence = round(random.uniform(0.7, 0.99), 2)
+    # Ejecutar predicción
+    with torch.no_grad():
+        output = model(input_tensor)
+        probabilities = torch.softmax(output, dim=1)
+        confidence, pred_class_idx = torch.max(probabilities, dim=1)
 
-    return pred_class, confidence
+    predicted_class = CLASS_NAMES[pred_class_idx.item()]
+    return predicted_class, round(confidence.item(), 4)

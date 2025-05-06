@@ -171,12 +171,12 @@
 						{
 							"key": "image",
 							"type": "file",
-							"src": "/C:/Users/marco/Desktop/test.png"
+							"src": "/C:/Users/marco/Desktop/healthy.jpg"
 						}
 					]
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/process_image/?filter=canny&original_id=9",
+					"raw": "http://localhost:8000/api/process_image/?filter=bilateral&original_id=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -190,11 +190,11 @@
 					"query": [
 						{
 							"key": "filter",
-							"value": "canny"
+							"value": "bilateral"
 						},
 						{
 							"key": "original_id",
-							"value": "9"
+							"value": "1"
 						}
 					]
 				}
@@ -211,7 +211,7 @@
 								{
 									"key": "image",
 									"type": "file",
-									"src": "/C:/Users/marco/Desktop/test.png"
+									"src": "/C:/Users/marco/Desktop/healthy.jpg"
 								}
 							]
 						},
@@ -234,8 +234,8 @@
 									"disabled": true
 								},
 								{
-									"key": "original_id",
-									"value": "2",
+									"key": "source_path",
+									"value": "/",
 									"disabled": true
 								}
 							]
@@ -247,7 +247,7 @@
 					"header": [
 						{
 							"key": "Date",
-							"value": "Mon, 05 May 2025 08:51:03 GMT"
+							"value": "Tue, 06 May 2025 06:25:56 GMT"
 						},
 						{
 							"key": "Server",
@@ -267,7 +267,7 @@
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"id\": 9,\n    \"filter\": \"raw\",\n    \"raw_url\": \"http://localhost:8000/media/user_generated/9_original.jpg\",\n    \"processed_url\": \"\"\n}"
+					"body": "{\n    \"source_path\": \"/media/user_generated/1_original.jpg\",\n    \"filter\": \"raw\",\n    \"raw_url\": \"http://localhost:8000/media/user_generated/1_original.jpg\",\n    \"processed_url\": \"\"\n}"
 				},
 				{
 					"name": "Apply filter to new image",
@@ -280,12 +280,13 @@
 								{
 									"key": "image",
 									"type": "file",
-									"src": "/C:/Users/marco/Desktop/test.png"
+									"src": "/C:/Users/marco/Desktop/healthy.jpg",
+									"disabled": true
 								}
 							]
 						},
 						"url": {
-							"raw": "http://localhost:8000/api/process_image/?filter=canny&original_id=9",
+							"raw": "http://localhost:8000/api/process_image/?filter=canny&source_path=/media/user_generated/1_original.jpg",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -302,8 +303,8 @@
 									"value": "canny"
 								},
 								{
-									"key": "original_id",
-									"value": "9"
+									"key": "source_path",
+									"value": "/media/user_generated/1_original.jpg"
 								}
 							]
 						}
@@ -314,7 +315,7 @@
 					"header": [
 						{
 							"key": "Date",
-							"value": "Mon, 05 May 2025 08:51:40 GMT"
+							"value": "Tue, 06 May 2025 06:27:14 GMT"
 						},
 						{
 							"key": "Server",
@@ -334,7 +335,75 @@
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"id\": 9,\n    \"filter\": \"canny\",\n    \"raw_url\": \"http://localhost:8000/media/user_generated/9_original.jpg\",\n    \"processed_url\": \"http://localhost:8000/media/user_generated/9_canny.jpg\"\n}"
+					"body": "{\n    \"source_path\": \"/media/user_generated/1_original.jpg\",\n    \"filter\": \"canny\",\n    \"raw_url\": \"http://localhost:8000/media/user_generated/1_original.jpg\",\n    \"processed_url\": \"http://localhost:8000/media/user_generated/1_canny.jpg\"\n}"
+				},
+				{
+					"name": "Apply filter to dataset image",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/marco/Desktop/healthy.jpg",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/process_image/?filter=canny&source_path=/media/train/Covid/01.jpeg",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"process_image",
+								""
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "canny"
+								},
+								{
+									"key": "source_path",
+									"value": "/media/train/Covid/01.jpeg"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Tue, 06 May 2025 06:28:18 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.10.11"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "origin"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"source_path\": \"/media/train/Covid/01.jpeg\",\n    \"filter\": \"canny\",\n    \"raw_url\": \"http://localhost:8000/media/train/Covid/01.jpeg\",\n    \"processed_url\": \"http://localhost:8000/media/user_generated/train_covid_01_canny.jpg\"\n}"
 				}
 			]
 		},
@@ -353,7 +422,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"path\": \"/media/user_generated/1_original.jpg\",\n    \"filter\": \"bilateral\"\n}\n",
+					"raw": "{\n    \"source_path\": \"/media/user_generated/1_original.jpg\",\n    \"filter\": \"raw\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -376,7 +445,7 @@
 			},
 			"response": [
 				{
-					"name": "Normal",
+					"name": "Dataset image (raw)",
 					"originalRequest": {
 						"method": "POST",
 						"header": [
@@ -387,7 +456,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"path\": \"/media/train/Covid/02.jpeg\",\n    \"filter\": \"bilateral\"\n}\n",
+							"raw": "{\n    \"source_path\": \"/media/train/Covid/01.jpeg\",\n    \"filter\": \"raw\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -414,7 +483,7 @@
 					"header": [
 						{
 							"key": "Date",
-							"value": "Mon, 05 May 2025 03:17:47 GMT"
+							"value": "Tue, 06 May 2025 06:46:33 GMT"
 						},
 						{
 							"key": "Server",
@@ -425,15 +494,19 @@
 							"value": "application/json"
 						},
 						{
+							"key": "Vary",
+							"value": "origin"
+						},
+						{
 							"key": "Connection",
 							"value": "close"
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"prediction\": \"normal\",\n    \"confidence\": 0.75\n}"
+					"body": "{\n    \"prediction\": \"covid\",\n    \"confidence\": 1\n}"
 				},
 				{
-					"name": "Covid",
+					"name": "Custom image (raw)",
 					"originalRequest": {
 						"method": "POST",
 						"header": [
@@ -444,7 +517,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"path\": \"/media/user_generated/1_original.jpg\",\n    \"filter\": \"bilateral\"\n}\n",
+							"raw": "{\n    \"source_path\": \"/media/user_generated/1_original.jpg\",\n    \"filter\": \"raw\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -471,7 +544,7 @@
 					"header": [
 						{
 							"key": "Date",
-							"value": "Mon, 05 May 2025 03:20:05 GMT"
+							"value": "Tue, 06 May 2025 06:45:00 GMT"
 						},
 						{
 							"key": "Server",
@@ -482,12 +555,138 @@
 							"value": "application/json"
 						},
 						{
+							"key": "Vary",
+							"value": "origin"
+						},
+						{
 							"key": "Connection",
 							"value": "close"
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"prediction\": \"covid\",\n    \"confidence\": 0.84\n}"
+					"body": "{\n    \"prediction\": \"covid\",\n    \"confidence\": 0.9248\n}"
+				},
+				{
+					"name": "Custom image (canny)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"source_path\": \"/media/user_generated/1_canny.jpg\",\n    \"filter\": \"canny\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/predict/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"predict",
+								""
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Tue, 06 May 2025 06:49:15 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.10.11"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "origin"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"prediction\": \"normal\",\n    \"confidence\": 0.9065\n}"
+				},
+				{
+					"name": "Custom image (bilateral)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"source_path\": \"/media/user_generated/1_bilateral.jpg\",\n    \"filter\": \"bilateral\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/predict/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"predict",
+								""
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Tue, 06 May 2025 06:51:31 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.10.11"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "origin"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"prediction\": \"covid\",\n    \"confidence\": 0.6214\n}"
 				}
 			]
 		}
