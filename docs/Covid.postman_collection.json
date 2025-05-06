@@ -76,7 +76,7 @@
 					"header": [
 						{
 							"key": "Date",
-							"value": "Mon, 05 May 2025 02:10:04 GMT"
+							"value": "Tue, 06 May 2025 07:06:25 GMT"
 						},
 						{
 							"key": "Server",
@@ -87,12 +87,16 @@
 							"value": "application/json"
 						},
 						{
+							"key": "Vary",
+							"value": "origin"
+						},
+						{
 							"key": "Connection",
 							"value": "close"
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"count\": 317,\n    \"num_pages\": 64,\n    \"results\": [\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/01.jpeg\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"filename\": \"01.jpeg\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/010.png\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"filename\": \"010.png\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/012.jpeg\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"filename\": \"012.jpeg\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/015.jpg\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"filename\": \"015.jpg\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/019.png\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"filename\": \"019.png\"\n        }\n    ]\n}"
+					"body": "{\n    \"count\": 336,\n    \"num_pages\": 68,\n    \"results\": [\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/01.jpeg\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"source_path\": \"/media/train/Covid/01.jpeg\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/010.png\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"source_path\": \"/media/train/Covid/010.png\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/012.jpeg\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"source_path\": \"/media/train/Covid/012.jpeg\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/015.jpg\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"source_path\": \"/media/train/Covid/015.jpg\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/train/Covid/019.png\",\n            \"type\": \"train\",\n            \"label\": \"covid\",\n            \"source_path\": \"/media/train/Covid/019.png\"\n        }\n    ]\n}"
 				},
 				{
 					"name": "User generated only",
@@ -133,7 +137,7 @@
 					"header": [
 						{
 							"key": "Date",
-							"value": "Mon, 05 May 2025 05:38:03 GMT"
+							"value": "Tue, 06 May 2025 07:06:14 GMT"
 						},
 						{
 							"key": "Server",
@@ -153,7 +157,7 @@
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"count\": 2,\n    \"num_pages\": 1,\n    \"results\": [\n        {\n            \"url\": \"http://localhost:8000/media/user_generated/1_canny.jpg\",\n            \"type\": \"user_generated\",\n            \"label\": \"canny\",\n            \"filename\": \"1_canny.jpg\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/user_generated/1_original.jpg\",\n            \"type\": \"user_generated\",\n            \"label\": \"original\",\n            \"filename\": \"1_original.jpg\"\n        }\n    ]\n}"
+					"body": "{\n    \"count\": 19,\n    \"num_pages\": 4,\n    \"results\": [\n        {\n            \"url\": \"http://localhost:8000/media/user_generated/10_canny.jpg\",\n            \"type\": \"user_generated\",\n            \"label\": \"canny\",\n            \"source_path\": \"/media/user_generated/10_canny.jpg\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/user_generated/10_original.jpg\",\n            \"type\": \"user_generated\",\n            \"label\": \"original\",\n            \"source_path\": \"/media/user_generated/10_original.jpg\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/user_generated/11_original.jpg\",\n            \"type\": \"user_generated\",\n            \"label\": \"original\",\n            \"source_path\": \"/media/user_generated/11_original.jpg\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/user_generated/12_canny.jpg\",\n            \"type\": \"user_generated\",\n            \"label\": \"canny\",\n            \"source_path\": \"/media/user_generated/12_canny.jpg\"\n        },\n        {\n            \"url\": \"http://localhost:8000/media/user_generated/12_original.jpg\",\n            \"type\": \"user_generated\",\n            \"label\": \"original\",\n            \"source_path\": \"/media/user_generated/12_original.jpg\"\n        }\n    ]\n}"
 				}
 			]
 		},

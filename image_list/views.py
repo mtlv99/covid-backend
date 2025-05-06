@@ -16,21 +16,13 @@ def image_list(request):
 
     # Nuevo parámetro de filtro
     location_filter = request.GET.get('location')
-
-    # Fuentes disponibles para explorar
-    locations_to_scan = []
-
-    if location_filter:
-        locations_to_scan = [location_filter]
-    else:
-        locations_to_scan = ['train', 'test', 'user_generated']
+    locations_to_scan = [location_filter] if location_filter else ['train', 'test', 'user_generated']
 
     for location in locations_to_scan:
         location_path = Path(dataset_dir) / location
         if not location_path.exists():
             continue
 
-        # Para train/test: carpetas por clase (covid, etc.)
         if location in ['train', 'test']:
             for category_folder in location_path.iterdir():
                 label = category_folder.name.lower().replace(' ', '_')
@@ -40,20 +32,18 @@ def image_list(request):
                         'url': base_url + str(relative_path).replace('\\', '/'),
                         'type': location,
                         'label': label,
-                        'filename': image_file.name
+                        'source_path': f"/media/{relative_path}".replace("\\", "/")
                     })
 
-        # Para user_generated: archivos directos
         elif location == 'user_generated':
             for image_file in location_path.glob('*.*'):
                 relative_path = image_file.relative_to(dataset_dir)
-                # Derivar etiqueta si posible
-                label = image_file.name.split('_')[-1].split('.')[0]  # e.g. 3_canny.jpg -> canny
+                label = image_file.name.split('_')[-1].split('.')[0]
                 all_images.append({
                     'url': base_url + str(relative_path).replace('\\', '/'),
                     'type': location,
                     'label': label,
-                    'filename': image_file.name
+                    'source_path': f"/media/{relative_path}".replace("\\", "/")
                 })
 
     # Paginación
