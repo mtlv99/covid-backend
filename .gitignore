@@ -10,7 +10,9 @@ __pycache__/
 *.pth
 
 # training data
-training/Covid19-dataset/
+training/Covid19-dataset/test/
+training/Covid19-dataset/train/
+training/Covid19-dataset/user_generated/
 
 # Distribution / packaging
 .Python
