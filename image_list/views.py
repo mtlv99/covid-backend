@@ -135,10 +135,10 @@ def upload_and_filter_image(request):
 
     # Aplicar filtro
     if filter_type == 'bilateral':
-        img_filtered = cv2.bilateralFilter(img, 9, 75, 75)
+        img_filtered = cv2.bilateralFilter(img, d=9, sigmaColor=75, sigmaSpace=75)
     elif filter_type == 'canny':
-        img_filtered = cv2.Canny(img, 100, 200)
-        img_filtered = cv2.cvtColor(img_filtered, cv2.COLOR_GRAY2BGR)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        img_filtered = cv2.Canny(gray, 100, 200)
     else:
         img_filtered = img
         filtered_filename = None

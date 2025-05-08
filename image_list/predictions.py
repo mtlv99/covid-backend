@@ -62,6 +62,11 @@ def predict_image_with_model(image_path, filter_type):
     image = Image.open(image_path).convert("RGB")
     input_tensor = transform(image).unsqueeze(0).to(DEVICE)
 
+    print(f"Predicción para la imagen '{image_path}'")
+    print(f"Tipo de filtro: {filter_type}")
+    print(f"Modelo cargado: {MODEL_PATHS[filter_type]}")
+    print("\n")
+
     # Ejecutar predicción
     with torch.no_grad():
         output = model(input_tensor)
